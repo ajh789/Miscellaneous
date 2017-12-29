@@ -1,0 +1,16 @@
+syntax = "proto3";
+package siemens.cnc;
+import public "google/protobuf/timestamp.proto";
+
+message CncMsg {
+  google.protobuf.Timestamp timestamp = 1;
+  string mac_addr = 2;
+  string ip_addr = 3;
+  string ip_port = 4;
+  repeated CncParam param = 5; // Array of params
+}
+
+message CncParam {
+  string name = 1;
+  string value = 2;
+}
