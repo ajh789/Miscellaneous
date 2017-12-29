@@ -4,7 +4,8 @@ Server stub for data acquisition program
 Version of protobuf
 -------------------
 
-3.0.0
+3.0.0, https://github.com/google/protobuf/releases/tag/v3.0.0
+
 
 Data layout over socket
 -----------------------
