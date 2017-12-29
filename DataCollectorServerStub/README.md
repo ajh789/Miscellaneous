@@ -9,6 +9,7 @@ Version of protobuf
 Data layout over socket
 -----------------------
 
+```
 +-----------------------+
 |      Magic number     |
 | (4 bytes, 0xDEADBEEF) |
@@ -21,14 +22,15 @@ Data layout over socket
 |   (protobuf message)  |
 |                       |
 +-----------------------+
+```
 
 Usage
 -----
 
-|----------------------------------------------------------|
-| $ ./datacollector_server.py --ip=127.0.0.1 --format=json |
-| 127.0.0.1 json                                           |
-| Starting up on 127.0.0.1 port 10000                      |
-| Waiting for a connection                                 |
-| Got Ctrl+C !                                             |
-
+```
+$ ./datacollector_server.py --ip=127.0.0.1 --format=json
+127.0.0.1 json
+Starting up on 127.0.0.1 port 10000
+Waiting for a connection
+Got Ctrl+C !
+```
