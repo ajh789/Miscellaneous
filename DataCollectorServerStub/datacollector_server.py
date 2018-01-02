@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-import re # regexp
+import re
 import sys
 import fcntl
 import getopt
@@ -67,11 +67,9 @@ def decodeAndParse(binBuff):
   msglen = socket.ntohs(header[1])
   rawlen = 4+2+msglen # 4 bytes magic number + 2 bytes msg len + msg content
   if (magic == 0xdeadbeef) and (len(binBuff) >= rawlen):
-    print('''
-      >>>>>>>>>>>>>>>>>>-<<<<<<<<<<<<<<<<<<
-      >>> See a full msg encapsulation! <<<
-      >>>>>>>>>>>>>>>>>>-<<<<<<<<<<<<<<<<<<
-      ''')
+    print('+-----------------------------------+')
+    print('|   See a full msg encapsulation!   |')
+    print('+-----------------------------------+')
     print('Msg len: %d' % (msglen,))
     msg = cnc_pb2.CncMsg()
     msg.ParseFromString(binBuff[6:rawlen]) # [start:stop:step]
@@ -104,13 +102,14 @@ def usage():
   print(sys.argv[0], '''
   -h|--help, show usage
   -a|--ip, set server ip address
+  -n|--port, set server port number
   -f|--format, set data format
   ''')
 
 def parseOpt(optstr):
-  ret, ip, dfmt= True, 'localhost', 'json'
+  ret, ip, port, dfmt = True, 'localhost', 10000, 'json'
   try:
-    opts, args = getopt.getopt(optstr, "ha:f:", ["help", "ip=", "format="])
+    opts, args = getopt.getopt(optstr, "ha:n:f:", ["help", "ip=", "port=", "format="])
   except getopt.GetoptError as err:
     print(str(err))
 
@@ -122,6 +121,11 @@ def parseOpt(optstr):
       if not re.match(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', ip):
         print('Invalid IP address: %s' % (ip,), file=sys.stderr)
         ret = False
+    elif opt in ('-n', '--port'):
+      try:
+        port = int(arg)
+      except ValueError:
+        print('Invalid port "%s", default to 10000.' % arg, file=sys.stderr)
     elif opt in ('-f', '--format'):
       dfmt = arg
       if dfmt not in ('json', 'protobuf'):
@@ -130,19 +134,20 @@ def parseOpt(optstr):
     else:
       assert False, 'unhandled option'
     
-  return (ret, ip, dfmt)
+  return (ret, ip, port, dfmt)
 
 
 def main():
-  (ret, ip, dfmt) = parseOpt(sys.argv[1:])
+  (ret, ip, port, dfmt) = parseOpt(sys.argv[1:])
 
-  print('%s %s' % (ip, dfmt))
+  print('server=%s:%d\tformat=%s' % (ip, port, dfmt))
 
   global gKeyboardInterrupt
+
   # Create a TCP socket
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   serverName = ip if len(ip)>1 else 'localhost'
-  serverAddr = (serverName, 10000)
+  serverAddr = (serverName, port) if port else (serverName, 10000)
   print('Starting up on %s port %s' % serverAddr, file=sys.stderr)
   sock.bind(serverAddr)
   sock.listen(1) # Listen for incoming connections
