@@ -36,7 +36,7 @@ class ConnThread(threading.Thread):
         if self.dfmt == 'json':
           data = nonBlockingReadLine(file)
         else:
-          data = nonBlockingRead(file, -1) # Read till EOF. ONLY works in Python3!!!
+          data = nonBlockingRead(file, -1) # Read till EOF before client calls close(). ONLY works in Python3 !!!
         if data:
           if self.dfmt == 'json':
             print('Received: %s' % data.rstrip())
@@ -98,13 +98,13 @@ def nonBlockingRead(stream, size):
     return ''
 
 def usage():
-  pass
   print(sys.argv[0], '''
-  -h|--help, show usage
-  -a|--ip, set server ip address
-  -n|--port, set server port number
-  -f|--format, set data format
+    -h|--help, show usage
+    -a|--ip, set server ip address
+    -n|--port, set server port number
+    -f|--format, set data format
   ''')
+  sys.exit(0)
 
 def parseOpt(optstr):
   ret, ip, port, dfmt = True, 'localhost', 10000, 'json'
