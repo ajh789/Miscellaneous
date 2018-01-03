@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import time
 import fcntl
 import getopt
 import signal
@@ -25,7 +26,8 @@ class ConnThread(threading.Thread):
     super(ConnThread, self).__init__()
     self.conn = conn
     self.addr = addr
-    self.dfmt = dfmt
+    self.dfmt = dfmt # Data format
+    self.tcnt = 0    # Sleeping time counter
   def run(self):
     global gKeyboardInterrupt
     global gBinBuffer
@@ -53,10 +55,13 @@ class ConnThread(threading.Thread):
 #           print repr(buffer[0])
 #           print ' '.join(x.encode('hex') for x in data)
         else:
-          pass
+#         pass
 #         print('No more data from', self.addr, file=sys.stderr)
-#         break
-      print('Exit thread loop!')
+          time.sleep(1)
+          self.tcnt += 1
+          # Wait 3 seconds and then exit
+          if self.tcnt == 3: break
+      print('Exit thread loop for', self.addr, file=sys.stderr)
     finally:
       file.close()
       self.conn.close()
