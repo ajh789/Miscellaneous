@@ -41,7 +41,7 @@ class ConnThread(threading.Thread):
           data = nonBlockingRead(file, -1) # Read till EOF before client calls close(). ONLY works in Python3 !!!
         if data:
           if self.dfmt == 'json':
-            print('Received: %s' % data.rstrip())
+            print('Received: %s' % data.rstrip().decode('utf-8'))
           else:
             print('Raw data:')
             print(binascii.hexlify(data))
